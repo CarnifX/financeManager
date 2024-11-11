@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
-from utils import check_login, create_user
+from utils import check_login, create_user, check_user_credentials
+
 
 def create_user_interface():
     root_login_interface = Tk()
@@ -48,12 +49,18 @@ def new_user_click():
     Button(root_new_user, text="Close", command=root_new_user.destroy).grid(row=3, column=1)
 
     def new_user_enter_click(username, password, email):
-        create_user(username, password, email)
+        root_new_user.attributes('-topmost', False)
+        if check_user_credentials(username, password, email):
+            create_user(username, password, email)
+        else:
+            root_new_user.attributes('-topmost', True)
 
 def open_main_interface():
     root_main_interface = Tk()
+    root_main_interface.title("Finance Manager")
+    center_window(root_main_interface, 400, 400)
 
-    Label(root_main_interface, text="Select what you want to do:").pack()
+    Label(root_main_interface, text="Select what you want to do:").grid(row=0, column=0)
 
 
 def center_window(window, width, height):

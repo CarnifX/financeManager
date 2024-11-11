@@ -1,3 +1,5 @@
+import re
+from tkinter import messagebox
 import bcrypt
 from dataBase import create_connection
 import pandas as pd
@@ -44,3 +46,53 @@ def check_login(username, password):
 
     return check_password(hashed_password, password)
 
+def check_if_username_exist(username):
+    connection = create_connection()
+    query = "SELECT 1 FROM users WHERE username = %s LIMIT 1;"
+    cursor = connection.cursor()
+    cursor.execute(query, (username,))
+    result = cursor.fetchone()
+
+    if result:
+        return True
+    else:
+        return False
+
+
+def check_if_email_exist(email):
+    connection = create_connection()
+    query = "SELECT 1 FROM users WHERE email = %s LIMIT 1;"
+    cursor = connection.cursor()
+    cursor.execute(query, (email,))
+    result = cursor.fetchone()
+
+    if result:
+        return True
+    else:
+        return False
+
+def test_password(password):
+    if re.search(r'[A-Z]', password) and re.search(r'[a-z]', password) and re.search(r'[0-9]', password):
+        return True
+
+def test_email(email):
+    if re.search(r'@, \.', email):
+        return True
+
+def check_user_credentials(username, password, email):
+    if check_if_username_exist(username):
+        messagebox.showinfo("Oops!", "Username already exists!")
+        return False
+    elif check_if_email_exist(email):
+        messagebox.showinfo("Oops!", "We have already registered an account for this e-mail!")
+        return False
+    elif len(password) <= 11:
+        messagebox.showinfo("Oops!", "Password is too short. Must contain 12 or more characters!")
+        return False
+    elif not test_password(password):
+        messagebox.showinfo("Oops!", "Password needs to contain at least one uppercase, one lowercase, and one number!")
+        return False
+    elif not test_email(email):
+        messagebox.showinfo("Oops!", "Please enter a valid e-mail address!")
+    else:
+        return True
