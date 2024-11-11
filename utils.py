@@ -1,7 +1,7 @@
 import re
 from tkinter import messagebox
 import bcrypt
-from dataBase import create_connection
+from data_base import create_connection
 import pandas as pd
 
 def create_user(username, password, email):
@@ -35,16 +35,17 @@ def get_transactions(user_id):
     return dataframe
 
 def check_login(username, password):
-    connection = create_connection()
-    query = "SELECT password FROM users WHERE username = %s"
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute(query, (username,))
-    rows = cursor.fetchall()
-    connection.close()
-    dataframe = pd.DataFrame(rows)
-    hashed_password = dataframe['password'].iloc[0].encode('utf-8')
+    if check_if_username_exist(username):
+        connection = create_connection()
+        query = "SELECT password FROM users WHERE username = %s"
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute(query, (username,))
+        rows = cursor.fetchall()
+        connection.close()
+        dataframe = pd.DataFrame(rows)
+        hashed_password = dataframe['password'].iloc[0].encode('utf-8')
 
-    return check_password(hashed_password, password)
+        return check_password(hashed_password, password)
 
 def check_if_username_exist(username):
     connection = create_connection()
@@ -96,3 +97,25 @@ def check_user_credentials(username, password, email):
         messagebox.showinfo("Oops!", "Please enter a valid e-mail address!")
     else:
         return True
+
+def center_window(window, width, height):
+
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+
+    window.geometry(f"{width}x{height}+{x}+{y}")
+
+def save_transaction(user_id, category_id, amount, description, date):
+    connection = create_connection()
+    query = "INSERT INTO transactions (user_id, category_id, amount, description, transaction_date) VALUES (%s, %s, %s, %s, %s)"
+    values = (user_id, category_id, amount, description, date)
+
+    cursor = connection.cursor()
+    cursor.execute(query, values)
+    connection.commit()
+    cursor.close()
+    connection.close()
+    print("The transaction is now logged!")
