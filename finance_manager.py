@@ -25,7 +25,8 @@ def enter_click(username, password):
     if utils.check_login(username, password):
         messagebox.showinfo("Login", "Login successful!")
         root_login_interface.destroy()
-        main_program_window.open_main_interface()
+        user_id = utils.get_user_id(username)
+        main_program_window.open_main_interface(user_id)
     else:
         messagebox.showinfo("Oops!", "Either the username or password is wrong, try again!")
 

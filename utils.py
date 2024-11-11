@@ -34,6 +34,16 @@ def get_transactions(user_id):
     dataframe = pd.DataFrame(rows)
     return dataframe
 
+def get_user_id(username):
+    connection = create_connection()
+    query = "SELECT user_id FROM users WHERE username = %s"
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(query, (username,))
+    result = cursor.fetchone()
+    connection.close()
+    user_id = result["user_id"]
+    return user_id
+
 def check_login(username, password):
     if check_if_username_exist(username):
         connection = create_connection()
@@ -119,3 +129,4 @@ def save_transaction(user_id, category_id, amount, description, date):
     cursor.close()
     connection.close()
     print("The transaction is now logged!")
+
