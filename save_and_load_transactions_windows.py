@@ -26,13 +26,12 @@ def save_transaction_window(user_id):
     description.grid(row=3, column=1, columnspan=4)
 
     Button(root_save_transaction, text="Cancel", command=root_save_transaction.destroy).grid(row=4, column=1)
-    Button(root_save_transaction, text="Save", command=lambda:(save_transaction(user_id, find_category_id(category_name.get(), user_id), amount.get(), description.get(), date.get()), root_save_transaction.destroy())).grid(row=4, column=3)
+    Button(root_save_transaction, text="Save", command=lambda:(save_transaction(find_category_id()))).grid(row=4, column=3)
 
-    def find_category_id(category_name, user_id):
+    def find_category_id():
         if utils.check_if_category_exist(category_name):
             return utils.get_category_id(category_name)
         else:
-            root_save_transaction.destroy()
             root_want_new_category = Tk()
             root_want_new_category.title("Create new category?")
             center_window(root_want_new_category, 180, 65)
@@ -46,7 +45,7 @@ def save_transaction_window(user_id):
                 row=1, column=4)
 
 
-    def save_transaction(user_id, category_id, amount, description, date):
+    def save_transaction(category_id):
         from main_program_window import open_main_interface
         connection = create_connection()
         query = "INSERT INTO transactions (user_id, category_id, amount, description, transaction_date) VALUES (%s, %s, %s, %s, %s)"
