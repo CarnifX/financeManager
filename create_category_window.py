@@ -4,6 +4,7 @@ import utils
 
 def create_category_window(user_id):
     from main_program_window import open_main_interface
+
     root_create_category = Tk()
     root_create_category.title("New category")
     utils.center_window(root_create_category, 290, 75)
@@ -14,10 +15,12 @@ def create_category_window(user_id):
 
     Label(root_create_category, text="Select income or expanse: ").grid(row=1, column=0)
 
-    category_type = StringVar()
+    category_type = StringVar(value="")
 
-    Radiobutton(root_create_category, text="Income", variable=category_type, value="income").grid(row=1, column=1)
-    Radiobutton(root_create_category, text="Expanse", variable=category_type, value="expense").grid(row=1, column=2)
+    income_button = Radiobutton(root_create_category, text="Income", variable=category_type, value="income")
+    income_button.grid(row=1, column=1)
+    expanse_button = Radiobutton(root_create_category, text="Expense", variable=category_type, value="expense")
+    expanse_button.grid(row=1, column=2)
 
     enter_button = Button(root_create_category, text="Enter", command=lambda: enter_button_click())
     enter_button.grid(row=2, column=2)
@@ -30,6 +33,7 @@ def create_category_window(user_id):
             root_create_category.destroy()
 
         elif not utils.check_if_category_exist(category_name.get()):
+            print(category_name.get(), category_type.get())
             match category_type.get():
                 case "income":
                     utils.create_new_category(category_name.get(), category_type.get())

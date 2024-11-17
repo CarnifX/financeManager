@@ -122,18 +122,6 @@ def center_window(window, width, height):
 
     window.geometry(f"{width}x{height}+{x}+{y}")
 
-def save_transaction(user_id, category_id, amount, description, date):
-    connection = create_connection()
-    query = "INSERT INTO transactions (user_id, category_id, amount, description, transaction_date) VALUES (%s, %s, %s, %s, %s)"
-    values = (user_id, category_id, amount, description, date)
-
-    cursor = connection.cursor()
-    cursor.execute(query, values)
-    connection.commit()
-    cursor.close()
-    connection.close()
-    print("The transaction is now logged!")
-
 def create_new_category(category_name, category_type):
     connection = create_connection()
     query = "INSERT INTO categories (name, type) VALUES (%s, %s)"
@@ -168,3 +156,13 @@ def get_category_id(category_name):
     connection.close()
     category_id = result["category_id"]
     return category_id
+
+def fetch_data_for_plot(user_id):
+    connection = create_connection()
+    query = "SELECT t.transaction_date, t.amount FROM transactions t JOIN categories c ON t.category_id = c.category_id WHERE c.type = 'expense' AND t.user_id = %s"
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(query, (user_id,))
+    data = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return data
