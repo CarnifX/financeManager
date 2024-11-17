@@ -63,6 +63,8 @@ def check_if_username_exist(username):
     cursor = connection.cursor()
     cursor.execute(query, (username,))
     result = cursor.fetchone()
+    cursor.close()
+    connection.close()
 
     if result:
         return True
@@ -76,6 +78,8 @@ def check_if_email_exist(email):
     cursor = connection.cursor()
     cursor.execute(query, (email,))
     result = cursor.fetchone()
+    cursor.close()
+    connection.close()
 
     if result:
         return True
@@ -130,3 +134,37 @@ def save_transaction(user_id, category_id, amount, description, date):
     connection.close()
     print("The transaction is now logged!")
 
+def create_new_category(category_name, category_type):
+    connection = create_connection()
+    query = "INSERT INTO categories (name, type) VALUES (%s, %s)"
+    values = (category_name, category_type)
+    cursor = connection.cursor()
+    cursor.execute(query, values)
+    connection.commit()
+    cursor.close()
+    connection.close()
+    messagebox.showinfo("Updated!", f"You've successfully added {category_name} to the database!")
+
+def check_if_category_exist(category_name):
+    connection = create_connection()
+    query = "SELECT 1 FROM categories WHERE name = %s LIMIT 1;"
+    cursor = connection.cursor()
+    cursor.execute(query, (category_name,))
+    result = cursor.fetchone()
+    cursor.close()
+    connection.close()
+
+    if result:
+        return True
+    else:
+        return False
+
+def get_category_id(category_name):
+    connection = create_connection()
+    query = "SELECT category_id FROM categories WHERE name = %s"
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(query, (category_name,))
+    result = cursor.fetchone()
+    connection.close()
+    category_id = result["category_id"]
+    return category_id

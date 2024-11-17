@@ -4,6 +4,7 @@ import new_user_window
 import main_program_window
 import utils
 
+
 root_login_interface = Tk()
 root_login_interface.title("Log in")
 utils.center_window(root_login_interface, 235, 75)
@@ -16,12 +17,12 @@ Label(root_login_interface, text="Password: ").grid(row=1, column=0)
 input_password = Entry(root_login_interface, show="*", borderwidth=2)
 input_password.grid(row=1, column=1, columnspan=1)
 
-Button(root_login_interface, text = "Enter", command=lambda: enter_click(input_username.get(), input_password.get())).grid(row=2, column=2)
+Button(root_login_interface, text = "Login", command=lambda: login_click(input_username.get(), input_password.get())).grid(row=2, column=2)
 Button(root_login_interface, text = "Close", command=root_login_interface.destroy).grid(row=2, column=0)
 Button(root_login_interface, text = "New user", command=new_user_window.new_user_click).grid(row=2, column=1)
 
 
-def enter_click(username, password):
+def login_click(username, password):
     if utils.check_login(username, password):
         messagebox.showinfo("Login", "Login successful!")
         root_login_interface.destroy()
