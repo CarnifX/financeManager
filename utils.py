@@ -4,6 +4,7 @@ import bcrypt
 from data_base import create_connection
 import pandas as pd
 
+
 def create_user(username, password, email):
     connection = create_connection()
     hashed_password = hash_password(password)
@@ -17,11 +18,14 @@ def create_user(username, password, email):
     connection.close()
     print("New user has been created!")
 
+
 def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
+
 def check_password(hashed_password, password):
     return bcrypt.checkpw(password.encode(), hashed_password)
+
 
 def get_transactions(user_id):
     connection = create_connection()
@@ -34,6 +38,7 @@ def get_transactions(user_id):
     dataframe = pd.DataFrame(rows)
     return dataframe
 
+
 def get_user_id(username):
     connection = create_connection()
     query = "SELECT user_id FROM users WHERE username = %s"
@@ -43,6 +48,7 @@ def get_user_id(username):
     connection.close()
     user_id = result["user_id"]
     return user_id
+
 
 def check_login(username, password):
     if check_if_username_exist(username):
@@ -56,6 +62,7 @@ def check_login(username, password):
         hashed_password = dataframe['password'].iloc[0].encode('utf-8')
 
         return check_password(hashed_password, password)
+
 
 def check_if_username_exist(username):
     connection = create_connection()
@@ -86,13 +93,16 @@ def check_if_email_exist(email):
     else:
         return False
 
+
 def test_password(password):
     if re.search(r'[A-Z]', password) and re.search(r'[a-z]', password) and re.search(r'[0-9]', password):
         return True
 
+
 def test_email(email):
     if re.search(r'@, \.', email):
         return True
+
 
 def check_user_credentials(username, password, email):
     if check_if_username_exist(username):
@@ -112,6 +122,7 @@ def check_user_credentials(username, password, email):
     else:
         return True
 
+
 def center_window(window, width, height):
 
     screen_width = window.winfo_screenwidth()
@@ -121,6 +132,7 @@ def center_window(window, width, height):
     y = (screen_height - height) // 2
 
     window.geometry(f"{width}x{height}+{x}+{y}")
+
 
 def create_new_category(category_name, category_type):
     connection = create_connection()
@@ -132,6 +144,7 @@ def create_new_category(category_name, category_type):
     cursor.close()
     connection.close()
     messagebox.showinfo("Updated!", f"You've successfully added {category_name} to the database!")
+
 
 def check_if_category_exist(category_name):
     connection = create_connection()
@@ -147,6 +160,7 @@ def check_if_category_exist(category_name):
     else:
         return False
 
+
 def get_category_id(category_name):
     connection = create_connection()
     query = "SELECT category_id FROM categories WHERE name = %s"
@@ -157,9 +171,21 @@ def get_category_id(category_name):
     category_id = result["category_id"]
     return category_id
 
-def fetch_data_for_plot(user_id):
+
+def fetch_date_and_amount(user_id):
     connection = create_connection()
     query = "SELECT t.transaction_date, t.amount FROM transactions t JOIN categories c ON t.category_id = c.category_id WHERE c.type = 'expense' AND t.user_id = %s"
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(query, (user_id,))
+    data = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return data
+
+
+def fetch_category_and_amount(user_id):
+    connection = create_connection()
+    query = "SELECT t.amount, c.name FROM transactions t JOIN categories c ON t.category_id = c.category_id WHERE c.type = 'expense' AND t.user_id = %s"
     cursor = connection.cursor(dictionary=True)
     cursor.execute(query, (user_id,))
     data = cursor.fetchall()

@@ -4,7 +4,9 @@ from data_base import create_connection
 from utils import center_window, create_new_category
 from tkinter import *
 
+
 def save_transaction_window(user_id):
+    from main_program_window import open_main_interface
     root_save_transaction = Tk()
     root_save_transaction.title("Save transaction")
     center_window(root_save_transaction, 320, 115)
@@ -25,8 +27,9 @@ def save_transaction_window(user_id):
     description = Entry(root_save_transaction, borderwidth=2, width=40)
     description.grid(row=3, column=1, columnspan=4)
 
-    Button(root_save_transaction, text="Cancel", command=root_save_transaction.destroy).grid(row=4, column=1)
+    Button(root_save_transaction, text="Cancel", command=lambda: cancel_button_click()).grid(row=4, column=1)
     Button(root_save_transaction, text="Save", command=lambda:(save_transaction(find_category_id()))).grid(row=4, column=3)
+
 
     def find_category_id():
         if utils.check_if_category_exist(category_name):
@@ -57,6 +60,11 @@ def save_transaction_window(user_id):
         cursor.close()
         connection.close()
         print("The transaction is now logged!")
+        root_save_transaction.destroy()
+        open_main_interface(user_id)
+
+
+    def cancel_button_click():
         root_save_transaction.destroy()
         open_main_interface(user_id)
 

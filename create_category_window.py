@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import utils
 
+
 def create_category_window(user_id):
     from main_program_window import open_main_interface
 
@@ -27,6 +28,7 @@ def create_category_window(user_id):
     cancel_button = Button(root_create_category, text="Cancel", command=lambda: cancel_button_click())
     cancel_button.grid(row=2, column=0)
 
+
     def enter_button_click():
         if not category_name.get():
             messagebox.showinfo("Oops!", "You can't leave the category name open!")
@@ -47,6 +49,7 @@ def create_category_window(user_id):
         else:
             messagebox.showinfo("Oops!", "This category already exists!")
             root_create_category.destroy()
+
 
     def cancel_button_click():
         root_create_category.destroy()
